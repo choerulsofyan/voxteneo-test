@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrganizerController;
+use App\Http\Controllers\SportEventController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +23,7 @@ Route::get('/', function () {
 Route::post('register2', [AuthController::class, 'register'])->name('register2');
 Route::post('login2', [AuthController::class, 'login'])->name('login2');
 Route::resource('organizers', OrganizerController::class);
+Route::resource('sport-events', SportEventController::class);
 
 Auth::routes();
 

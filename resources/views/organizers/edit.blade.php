@@ -8,7 +8,7 @@
 
         <form action="{{ route('organizers.update', $organizer['id']) }}" method="POST">
             @csrf
-            @method('PUT') <!-- Add the method spoofing for PUT -->
+            @method('PUT')
 
             <div class="card-body">
 
