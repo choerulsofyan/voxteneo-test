@@ -8,10 +8,17 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
+    private $apiBaseUrl;
+    private $client;
+
+    public function __construct(Client $client)
+    {
+        $this->apiBaseUrl = env('API_BASE_URL');
+        $this->client = $client;
+    }
+
     public function register(RegisterUserRequest $request)
     {
-        $apiBaseUrl = env('API_BASE_URL');
-
         $apiRequestBody = [
             'firstName' => $request->first_name,
             'lastName' => $request->last_name,
@@ -20,50 +27,53 @@ class AuthController extends Controller
             'repeatPassword' => $request->password_confirmation,
         ];
 
-        // Send the request to the external API using Guzzle
-        $client = new Client();
-        $response = $client->post($apiBaseUrl . '/users', [
-            'headers' => ['Content-type' => 'application/json'],
+        $response = $this->client->post("$this->apiBaseUrl/users", [
+            'headers' => [
+                'Content-type' => 'application/json',
+            ],
             'json' => $apiRequestBody,
         ]);
 
-        // Process the API response as needed
-        $apiResponse = json_decode($response->getBody(), true);
-
-        // Return a response to the user based on the API response
         if ($response->getStatusCode() === 200) {
-            return response()->json(['message' => 'Registration successful'], 200);
+            return redirect()->route('login');
         } else {
-            return response()->json(['error' => 'Registration failed'], 500);
+            return back()->withInput();
         }
+    }
+
+    public function showLoginForm()
+    {
+        return view('auth.login');
     }
 
     public function login(Request $request)
     {
-        $apiBaseUrl = env('API_BASE_URL');
-
         $apiRequestBody = [
             'email' => $request->input('email'),
             'password' => $request->input('password'),
         ];
 
-        // Send the login request to the external API using Guzzle
-        $client = new Client();
-        $response = $client->post($apiBaseUrl . '/users/login', [
-            'headers' => ['Content-type' => 'application/json'],
+        $response = $this->client->post("$this->apiBaseUrl/users/login", [
+            'headers' => [
+                'Content-type' => 'application/json',
+            ],
             'json' => $apiRequestBody,
         ]);
 
-        $responseData = json_decode($response->getBody(), true);
-
         if ($response->getStatusCode() === 200) {
-
+            $responseData = json_decode($response->getBody(), true);
             session(['api_token' => $responseData['token']]);
-
-            // Return the authenticated response to the user
-            return response()->json($responseData, 200);
+            session(['user_id' => $responseData['id']]);
+            return redirect()->route('dashboard');
+        } else {
+            return back()->withInput();
         }
+    }
 
-        return response()->json(['error' => 'Login failed'], 401);
+    public function logout()
+    {
+        session()->forget('api_token');
+        session()->forget('user_id');
+        return redirect()->route('login');
     }
 }

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\SportEventController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,20 +21,21 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('register2', [AuthController::class, 'register'])->name('register2');
-Route::post('login2', [AuthController::class, 'login'])->name('login2');
-Route::resource('organizers', OrganizerController::class);
-Route::resource('sport-events', SportEventController::class);
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::post('register', [AuthController::class, 'register'])->name('register');
+Route::get('login', [AuthController::class, 'showLoginForm'])->name('showLoginForm');
+Route::post('login', [AuthController::class, 'login'])->name('login');
 
-// Route::middleware('auth')->group(function () {
-Route::view('about', 'about')->name('about');
-
-Route::get('users', [\App\Http\Controllers\UserController::class, 'index'])->name('users.index');
-
-Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
-Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
-// });
+Route::middleware(['auth.api_token'])->group(
+    function () {
+        Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+        Route::resource('organizers', OrganizerController::class);
+        Route::resource('sport-events', SportEventController::class);
+        Route::resource('users', UserController::class);
+    }
+);

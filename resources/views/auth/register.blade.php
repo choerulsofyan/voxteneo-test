@@ -6,7 +6,7 @@
             <div class="card-body p-4">
                 <h1>Register</h1>
 
-                <form method="POST" action="{{ route('register2') }}">
+                <form method="POST" action="{{ route('register') }}">
                     @csrf
 
                     <div class="input-group mb-3"><span class="input-group-text">

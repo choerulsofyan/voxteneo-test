@@ -39,7 +39,7 @@
                     </svg>
                 </a>
                 <ul class="header-nav d-none d-md-flex">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a></li>
                 </ul>
                 <ul class="header-nav ms-auto">
 
@@ -48,15 +48,9 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link py-0" data-coreui-toggle="dropdown" href="#" role="button"
                             aria-haspopup="true" aria-expanded="false">
-                            NAME{{-- {{ Auth::user()->name }} --}}
+                            Welcome{{-- {{ Auth::user()->name }} --}}
                         </a>
                         <div class="dropdown-menu dropdown-menu-end pt-0">
-                            <a class="dropdown-item" href="{{ route('profile.show') }}">
-                                <svg class="icon me-2">
-                                    <use xlink:href="{{ asset('icons/coreui.svg#cil-user') }}"></use>
-                                </svg>
-                                {{ __('My profile') }}
-                            </a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <a class="dropdown-item" href="{{ route('logout') }}"
